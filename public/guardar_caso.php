@@ -132,7 +132,7 @@ try {
 
     // Referencia temporal única mientras conseguimos el id real (se reemplaza abajo)
     $stmt->execute([
-        'numero_referencia' => uniqid('tmp_', true),
+        'numero_referencia' => uniqid('tmp_'),
         'tipo_caso_id' => $tipoCasoId,
         'es_anonimo' => $esAnonimo,
         'descripcion' => $descripcion,
