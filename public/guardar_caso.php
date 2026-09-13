@@ -24,10 +24,16 @@ register_shutdown_function(function () {
 });
 
 require_once __DIR__ . '/../bootstrap/app.php';
+require_once __DIR__ . '/../providers/EmailService.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
 const CATEGORIAS_VALIDAS = [1, 2, 3];
+const NOMBRES_CATEGORIA = [
+    1 => 'Queja o Reclamo',
+    2 => 'Sugerencia de Mejora',
+    3 => 'Reporte de Irregularidades',
+];
 const EXTENSIONES_PERMITIDAS = ['pdf', 'png', 'jpg', 'jpeg'];
 const MAX_ARCHIVOS = 10;
 const MAX_BYTES_TOTAL = 10 * 1024 * 1024;
@@ -180,6 +186,22 @@ try {
     }
 
     $pdo->commit();
+
+    // El correo es "best-effort": si falla, el caso ya quedó guardado igual,
+    // así que no le mostramos error al usuario por esto — solo lo registramos.
+    try {
+        EmailService::notificarNuevoCaso([
+            'numero_referencia' => $numeroReferencia,
+            'fecha_suceso' => $fechaSuceso,
+            'es_anonimo' => $esAnonimo,
+            'contacto_nombre' => $contactoNombre,
+            'contacto_email' => $contactoEmail,
+            'contacto_telefono' => $contactoTelefono,
+            'descripcion' => $descripcion,
+        ], NOMBRES_CATEGORIA[$tipoCasoId]);
+    } catch (Throwable $errorCorreo) {
+        error_log('No se pudo enviar la notificación por correo: ' . $errorCorreo->getMessage());
+    }
 
     responder(200, ['numero_referencia' => $numeroReferencia]);
 } catch (Throwable $e) {

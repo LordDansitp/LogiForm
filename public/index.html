@@ -102,10 +102,7 @@
     .panel-izq, .panel-der{padding:40px 24px;}
     .fila{grid-template-columns: 1fr;}
   }
-
-  .panel-izq, .panel-der { 
-    min-width: 0; 
-  }
+  .panel-izq, .panel-der{ min-width: 0; }
 </style>
 </head>
 <body>
@@ -116,7 +113,6 @@
 <div class="wrap">
 
   <div class="panel-izq">
-    <div class="eyebrow">CANAL ÉTICO</div>
     <div class="carrusel" aria-live="polite">
       <h1 class="frase activa">¡Cuéntanos tu experiencia!<br>¿Qué ha pasado?</h1>
       <h1 class="frase">Tu voz nos ayuda<br>a mejorar cada día</h1>
@@ -180,7 +176,7 @@
             <option value="" disabled selected>Selecciona una opción</option>
             <option value="1" data-ayuda="Servicio, producto, logística">Queja o Reclamo</option>
             <option value="2" data-ayuda="Procesos, atención, plataforma">Sugerencia de Mejora</option>
-            <option value="3" data-ayuda="Buenas prácticas, fraudes, faltas de cumplimiento">Reporte de Irregularidades / Canal Ético</option>
+            <option value="3" data-ayuda="Buenas prácticas, fraudes, faltas de cumplimiento">Reporte de Irregularidades</option>
           </select>
           <div class="ayuda" id="ayuda-tipo-caso"></div>
           <div class="error">Selecciona una categoría.</div>

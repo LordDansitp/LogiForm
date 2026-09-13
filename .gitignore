@@ -2,3 +2,4 @@
 vendor/
 storage/adjuntos/*
 !storage/adjuntos/.gitkeep
+config/admins.php
