@@ -190,15 +190,7 @@ try {
     // El correo es "best-effort": si falla, el caso ya quedó guardado igual,
     // así que no le mostramos error al usuario por esto — solo lo registramos.
     try {
-        EmailService::notificarNuevoCaso([
-            'numero_referencia' => $numeroReferencia,
-            'fecha_suceso' => $fechaSuceso,
-            'es_anonimo' => $esAnonimo,
-            'contacto_nombre' => $contactoNombre,
-            'contacto_email' => $contactoEmail,
-            'contacto_telefono' => $contactoTelefono,
-            'descripcion' => $descripcion,
-        ], NOMBRES_CATEGORIA[$tipoCasoId]);
+        EmailService::notificarNuevoCaso($numeroReferencia, NOMBRES_CATEGORIA[$tipoCasoId]);
     } catch (Throwable $errorCorreo) {
         error_log('No se pudo enviar la notificación por correo: ' . $errorCorreo->getMessage());
     }

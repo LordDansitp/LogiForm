@@ -2,7 +2,12 @@
 
 class EmailService
 {
-    public static function notificarNuevoCaso(array $caso, string $nombreCategoria): bool
+    /**
+     * Envía solo una alerta genérica — nada de descripción, nombre, empresa,
+     * correo ni teléfono del reportante. El contenido real del caso se
+     * consulta únicamente desde el panel administrativo (con sesión).
+     */
+    public static function notificarNuevoCaso(string $numeroReferencia, string $nombreCategoria): bool
     {
         $apiKey = $_ENV['RESEND_API_KEY'] ?? null;
         $desde = $_ENV['EMAIL_FROM'] ?? 'onboarding@resend.dev';
@@ -13,26 +18,15 @@ class EmailService
             return false;
         }
 
-        $remitente = $caso['es_anonimo'] ? 'Anónimo' : ($caso['contacto_nombre'] ?: 'Sin nombre');
-
-        $cuerpo = '<h2>Nuevo reporte recibido — Canal Ético</h2>'
-            . "<p><strong>N° de referencia:</strong> {$caso['numero_referencia']}</p>"
-            . '<p><strong>Categoría:</strong> ' . htmlspecialchars($nombreCategoria) . '</p>'
-            . "<p><strong>Fecha del suceso:</strong> {$caso['fecha_suceso']}</p>"
-            . '<p><strong>Remitente:</strong> ' . htmlspecialchars($remitente) . '</p>';
-
-        if (!$caso['es_anonimo']) {
-            $cuerpo .= '<p><strong>Email:</strong> ' . htmlspecialchars($caso['contacto_email'] ?: '—') . '</p>'
-                . '<p><strong>Teléfono:</strong> ' . htmlspecialchars($caso['contacto_telefono'] ?: '—') . '</p>';
-        }
-
-        $cuerpo .= '<p><strong>Descripción:</strong><br>' . nl2br(htmlspecialchars($caso['descripcion'])) . '</p>'
-            . '<hr><p style="color:#888;font-size:12px">Entra a la tabla "casos" en Supabase para ver el detalle completo y los adjuntos.</p>';
+        $cuerpo = '<p>Te llegó un nuevo reporte a través del Canal Ético.</p>'
+            . "<p><strong>N° de referencia:</strong> {$numeroReferencia}<br>"
+            . '<strong>Categoría:</strong> ' . htmlspecialchars($nombreCategoria) . '</p>'
+            . '<p>Ingresa al panel administrativo para ver el detalle completo.</p>';
 
         $payload = json_encode([
             'from' => $desde,
             'to' => [$hacia],
-            'subject' => "Nuevo caso — {$caso['numero_referencia']} ({$nombreCategoria})",
+            'subject' => "Nuevo reporte — {$numeroReferencia}",
             'html' => $cuerpo,
         ]);
 
@@ -66,7 +60,7 @@ class EmailService
             return false;
         }
 
-        error_log("EmailService: correo enviado a {$hacia} para el caso {$caso['numero_referencia']}.");
+        error_log("EmailService: notificación enviada a {$hacia} para el caso {$numeroReferencia}.");
 
         return true;
     }
