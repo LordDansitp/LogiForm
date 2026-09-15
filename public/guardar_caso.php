@@ -140,7 +140,7 @@ try {
     $stmt->execute([
         'numero_referencia' => uniqid('tmp_'),
         'tipo_caso_id' => $tipoCasoId,
-        'es_anonimo' => $esAnonimo,
+        'es_anonimo' => $esAnonimo ? 'true' : 'false',
         'descripcion' => $descripcion,
         'fecha_suceso' => $fechaSuceso,
         'contacto_nombre' => $esAnonimo ? null : $contactoNombre,
