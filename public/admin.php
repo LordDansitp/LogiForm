@@ -259,7 +259,6 @@ $estadosPosibles = ['recibido', 'en revisión', 'en investigación', 'resuelto',
 </main>
 
 <script>
-  // Animar las donas al cargar
   document.querySelectorAll('.dona-anillo').forEach(function(circulo){
     const offset = circulo.dataset.offset;
     requestAnimationFrame(function(){

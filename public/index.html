@@ -107,7 +107,7 @@
 </head>
 <body>
 <!--
-  NOTA DE INTEGRACIÓN: esta sección va debajo del bloque "Contáctanos"
+  NOTA de Daniel: esta sección va debajo del bloque "Contáctanos"
   ya existente en la página, reutilizando su misma estética (no se modificó).
 -->
 <div class="wrap">
@@ -218,7 +218,6 @@
 
 <script>
 (function(){
-  // Carrusel de frases
   const frases = document.querySelectorAll('.frase');
   let idx = 0;
   setInterval(function(){
@@ -227,11 +226,9 @@
     frases[idx].classList.add('activa');
   }, 4000);
 
-  // Fecha del suceso: no permitir fechas futuras
   const fecha = document.getElementById('fecha_suceso');
   fecha.max = new Date().toISOString().split('T')[0];
 
-  // Mostrar la ayuda de la categoría seleccionada
   const tipoCaso = document.getElementById('tipo_caso');
   const ayudaTipo = document.getElementById('ayuda-tipo-caso');
   tipoCaso.addEventListener('change', function(){
@@ -239,7 +236,6 @@
     ayudaTipo.textContent = opcion ? (opcion.dataset.ayuda || '') : '';
   });
 
-  // Toggle anónimo / identificado
   const bloqueContacto = document.getElementById('bloque-contacto');
   document.querySelectorAll('input[name="modo"]').forEach(function(radio){
     radio.addEventListener('change', function(){
@@ -251,7 +247,6 @@
     });
   });
 
-  // Mostrar cuántos archivos se eligieron (el input real queda oculto)
   const adjuntos = document.getElementById('adjuntos');
   const listaArchivos = document.getElementById('lista-archivos');
   adjuntos.addEventListener('change', function(){
@@ -264,7 +259,6 @@
     }
   });
 
-  // Contador de caracteres
   const descripcion = document.getElementById('descripcion');
   const contador = document.getElementById('contador-descripcion');
   descripcion.addEventListener('input', function(){
@@ -273,7 +267,6 @@
     contador.classList.toggle('limite', len >= 2500);
   });
 
-  // Validación y envío
   const form = document.getElementById('form-caso');
   const mensaje = document.getElementById('mensaje');
   const MAX_TOTAL_BYTES = 10 * 1024 * 1024;

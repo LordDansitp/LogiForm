@@ -1,10 +1,5 @@
 <?php
 
-// Atrapa cualquier error de PHP (incluso los fatales) y lo devuelve como JSON
-// legible, en vez de dejar una respuesta rota que el navegador no puede leer.
-// NOTA: esto muestra el mensaje de error tal cual al usuario — es útil mientras
-// desarrollamos, pero antes de pasar a producción real conviene ocultar el
-// detalle técnico y solo dejarlo en el log del servidor.
 set_error_handler(function ($severity, $message, $file, $line) {
     throw new ErrorException($message, 0, $severity, $file, $line);
 });
@@ -74,7 +69,6 @@ if ($contactoEmail !== null && !filter_var($contactoEmail, FILTER_VALIDATE_EMAIL
     responder(422, ['error' => 'El correo indicado no es válido.']);
 }
 
-// --- 2. Validar los adjuntos ---
 $archivos = [];
 if (!empty($_FILES['adjuntos']['name'][0])) {
     $cantidad = count($_FILES['adjuntos']['name']);
@@ -187,8 +181,6 @@ try {
 
     $pdo->commit();
 
-    // El correo es "best-effort": si falla, el caso ya quedó guardado igual,
-    // así que no le mostramos error al usuario por esto — solo lo registramos.
     try {
         EmailService::notificarNuevoCaso($numeroReferencia, NOMBRES_CATEGORIA[$tipoCasoId]);
     } catch (Throwable $errorCorreo) {

@@ -3,7 +3,7 @@
 class EmailService
 {
     /**
-     * Envía solo una alerta genérica — nada de descripción, nombre, empresa,
+     * OJO, Envía únicamente una alerta genérica — nada de descripción, nombre, empresa,
      * correo ni teléfono del reportante. El contenido real del caso se
      * consulta únicamente desde el panel administrativo (con sesión).
      */

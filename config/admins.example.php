@@ -1,11 +1,8 @@
 <?php
 
-// Copia este archivo como admins.php (en la misma carpeta) y pon ahí los
-// nombres y contraseñas reales. admins.php NO se sube a git (está en
-// .gitignore) — así las contraseñas reales nunca quedan en el repositorio.
-//
 // Para agregar o modificar un administrador, solo edita este arreglo:
 // cambia el 'nombre' y la 'password' de cada persona.
+// por ejemplo. yo tengo en admins.php ['nombre' => 'daniel', 'password' => 'logiadmin'], así tienen que ponerlo
 
 return [
     ['nombre' => 'Persona 1', 'password' => 'cambia-esta-contraseña-1'],
