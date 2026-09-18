@@ -1,0 +1,339 @@
+<!--
+  Widget Canal Ético — pegar en un widget de tipo HTML de Elementor,
+  debajo de la sección "Contáctanos" existente en /contactanos/.
+  No usar el widget "Editor de texto": ese le aplica filtros de WordPress
+  (wpautop/kses) que rompen el <script> y el <style> de aquí abajo.
+
+  Antes de publicar: confirmar que la URL del fetch() más abajo coincide
+  con la ruta real donde quedó subido el proyecto en el servidor.
+-->
+<style>
+#canal-etico-widget{
+    --azul: #165DA9;
+    --azul-claro: #3688C9;
+    --marino: #174969;
+    --texto-claro: #EAF1F8;
+    --texto-muted: #AFC6D9;
+    --rojo: #E4572E;
+  }
+#canal-etico-widget *{box-sizing:border-box;}
+#canal-etico-widget{margin:0; font-family:'Poppins', sans-serif; color:var(--texto-claro);}
+#canal-etico-widget .wrap{display:grid; grid-template-columns: 42% 58%; min-height:100vh;}
+#canal-etico-widget .panel-izq{background:var(--azul); padding:64px 56px; display:flex; flex-direction:column; justify-content:center;}
+#canal-etico-widget .eyebrow{letter-spacing:.14em; font-size:12px; font-weight:600; margin-bottom:18px;}
+#canal-etico-widget .carrusel{min-height:150px;}
+#canal-etico-widget .carrusel h1{
+    font-size:36px; font-weight:600; line-height:1.25; margin:0;
+    opacity:0; transition:opacity .5s ease;
+  }
+#canal-etico-widget .carrusel h1.activa{opacity:1;}
+#canal-etico-widget .panel-izq p{color:#DCE9F7; font-size:15px; line-height:1.6; max-width:38ch; margin:20px 0 28px;}
+#canal-etico-widget .divisor{border:none; border-top:1px solid rgba(255,255,255,.25); margin:8px 0 28px;}
+#canal-etico-widget .contacto{display:flex; align-items:center; gap:14px; margin-bottom:18px;}
+#canal-etico-widget .contacto .icono{width:40px; height:40px; border-radius:50%; background:var(--azul-claro); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+#canal-etico-widget .contacto strong{display:block; font-size:14px;}
+#canal-etico-widget .contacto span{color:#CFE0F0; font-size:14px;}
+#canal-etico-widget .panel-der{background:var(--marino); padding:56px 64px;}
+#canal-etico-widget .panel-der h2{font-size:13px; letter-spacing:.1em; font-weight:600; text-transform:uppercase; margin:0 0 6px;}
+#canal-etico-widget .panel-der .subtitulo{font-size:13px; color:var(--texto-muted); margin:0 0 24px;}
+#canal-etico-widget form{max-width:640px;}
+#canal-etico-widget .fila{display:grid; grid-template-columns: 1fr 1fr; gap:0 32px;}
+#canal-etico-widget .fila.uno{grid-template-columns: 1fr;}
+#canal-etico-widget .campo{margin-bottom:22px;}
+#canal-etico-widget label{display:block; font-size:12px; letter-spacing:.08em; text-transform:uppercase; font-weight:600; margin-bottom:8px;}
+#canal-etico-widget label .req{color:var(--rojo); margin-left:2px;}
+#canal-etico-widget input, #canal-etico-widget select, #canal-etico-widget textarea{
+    width:100%; background:transparent; border:none; border-bottom:1px solid rgba(255,255,255,.35);
+    color:var(--texto-claro); font-family:inherit; font-size:14px; padding:6px 2px 10px; outline:none;
+    transition:border-color .15s ease;
+  }
+#canal-etico-widget select{color-scheme: dark;}
+#canal-etico-widget select option{color:#111;}
+#canal-etico-widget textarea{resize:vertical; min-height:90px;}
+#canal-etico-widget input::placeholder, #canal-etico-widget textarea::placeholder{color:var(--texto-muted);}
+#canal-etico-widget input:focus, #canal-etico-widget select:focus, #canal-etico-widget textarea:focus{border-bottom-color:var(--azul-claro);}
+#canal-etico-widget .campo-archivo{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:4px;}
+#canal-etico-widget .input-archivo-oculto{
+    position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
+    clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+#canal-etico-widget .boton-archivo{
+    display:inline-block; background:var(--azul-claro); color:#fff; font-size:13px; font-weight:500;
+    padding:10px 20px; border-radius:20px; cursor:pointer; transition:background .15s ease;
+    text-transform:none; letter-spacing:0; margin:0; white-space:nowrap;
+  }
+#canal-etico-widget .boton-archivo:hover{background:#2a76b3;}
+#canal-etico-widget .input-archivo-oculto:focus-visible + .boton-archivo{outline:2px solid #fff; outline-offset:2px;}
+#canal-etico-widget .texto-archivos{font-size:13px; color:var(--texto-muted);}
+#canal-etico-widget input[type="date"]{color-scheme: dark;}
+#canal-etico-widget .ayuda{font-size:12px; color:var(--texto-muted); margin-top:6px;}
+#canal-etico-widget .contador{font-size:12px; color:var(--texto-muted); margin-top:6px; text-align:right;}
+#canal-etico-widget .contador.limite{color:#FFB4A0;}
+#canal-etico-widget .error{font-size:12px; color:#FFB4A0; margin-top:6px; display:none;}
+#canal-etico-widget .campo.invalido .error{display:block;}
+#canal-etico-widget .campo.invalido input, #canal-etico-widget .campo.invalido select, #canal-etico-widget .campo.invalido textarea{border-bottom-color:#FFB4A0;}
+#canal-etico-widget .toggle-anonimato{display:flex; gap:10px; margin-bottom:24px;}
+#canal-etico-widget .toggle-anonimato label{
+    flex:1; text-align:center; text-transform:none; letter-spacing:0; font-weight:500;
+    border:1px solid rgba(255,255,255,.35); border-radius:24px; padding:10px 14px;
+    cursor:pointer; margin:0; font-size:14px; transition:background .15s ease, border-color .15s ease;
+  }
+#canal-etico-widget .toggle-anonimato input{position:absolute; opacity:0; pointer-events:none;}
+#canal-etico-widget .toggle-anonimato input:checked + label{background:var(--azul-claro); border-color:var(--azul-claro);}
+#canal-etico-widget .bloque-contacto{overflow:hidden; max-height:400px; transition:max-height .25s ease, opacity .25s ease; opacity:1;}
+#canal-etico-widget .bloque-contacto.oculto{max-height:0; opacity:0; pointer-events:none;}
+#canal-etico-widget button{
+    display:block; width:100%; background:transparent; border:1px solid rgba(255,255,255,.6);
+    color:var(--texto-claro); font-family:inherit; font-size:14px; font-weight:500; letter-spacing:.03em;
+    padding:14px 24px; border-radius:28px; cursor:pointer; transition:background .15s ease; margin-top:8px;
+  }
+#canal-etico-widget button:hover{background:rgba(255,255,255,.08);}
+#canal-etico-widget button:focus-visible, #canal-etico-widget input:focus-visible, #canal-etico-widget select:focus-visible, #canal-etico-widget textarea:focus-visible{
+    outline:2px solid var(--azul-claro); outline-offset:2px;
+  }
+#canal-etico-widget #mensaje{margin-top:18px; font-size:14px; padding:12px 16px; border-radius:8px; display:none;}
+#canal-etico-widget #mensaje.ok{display:block; background:rgba(88,182,120,.15); color:#9FE3B4; border:1px solid rgba(88,182,120,.4);}
+#canal-etico-widget #mensaje.err{display:block; background:rgba(228,87,46,.15); color:#FFB4A0; border:1px solid rgba(228,87,46,.4);}
+@media (max-width: 860px){
+#canal-etico-widget .wrap{grid-template-columns: 1fr;}
+#canal-etico-widget .panel-izq, #canal-etico-widget .panel-der{padding:40px 24px;}
+#canal-etico-widget .fila{grid-template-columns: 1fr;}
+}
+#canal-etico-widget .panel-izq, #canal-etico-widget .panel-der{ min-width: 0; }
+</style>
+
+<div id="canal-etico-widget">
+<!--
+  NOTA de Daniel: esta sección va debajo del bloque "Contáctanos"
+  ya existente en la página, reutilizando su misma estética (no se modificó).
+-->
+<div class="wrap">
+
+  <div class="panel-izq">
+    <div class="carrusel" aria-live="polite">
+      <h1 class="frase activa">¡Cuéntanos tu experiencia!<br>¿Qué ha pasado?</h1>
+      <h1 class="frase">Tu voz nos ayuda<br>a mejorar cada día</h1>
+      <h1 class="frase">Cualquier situación,<br>la escuchamos con seriedad</h1>
+    </div>
+    <p>Quejas, sugerencias o reportes de irregularidades: puedes escribirnos de forma anónima o identificada. Tu reporte queda con un número de seguimiento único.</p>
+    <hr class="divisor">
+    <div class="contacto">
+      <span class="icono">📞</span>
+      <div><strong>Nuestro Teléfono</strong><span>+58 412-103-9244</span></div>
+    </div>
+    <div class="contacto">
+      <span class="icono">✉️</span>
+      <div><strong>Canal Ético</strong><span>canal.etico@logienter.com</span></div>
+    </div>
+  </div>
+
+  <div class="panel-der">
+    <form id="form-caso" novalidate>
+
+      <div class="fila uno">
+        <div class="campo">
+          <label>¿Cómo deseas enviar tu reporte?</label>
+          <div class="toggle-anonimato">
+            <input type="radio" id="modo-anonimo" name="modo" value="anonimo" checked>
+            <label for="modo-anonimo">Anónimo</label>
+            <input type="radio" id="modo-identificado" name="modo" value="identificado">
+            <label for="modo-identificado">Identificado</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="bloque-contacto oculto" id="bloque-contacto">
+        <div class="fila">
+          <div class="campo">
+            <label for="contacto_nombre">¿Cómo quieres ser llamado?</label>
+            <input type="text" id="contacto_nombre" name="contacto_nombre" placeholder="Opcional">
+          </div>
+          <div class="campo">
+            <label for="contacto_empresa">Empresa</label>
+            <input type="text" id="contacto_empresa" name="contacto_empresa" placeholder="Opcional">
+          </div>
+        </div>
+        <div class="fila">
+          <div class="campo">
+            <label for="contacto_email">Email</label>
+            <input type="email" id="contacto_email" name="contacto_email" placeholder="Opcional">
+            <div class="error">Ese correo no se ve válido.</div>
+          </div>
+          <div class="campo">
+            <label for="contacto_telefono">Número de teléfono</label>
+            <input type="tel" id="contacto_telefono" name="contacto_telefono" placeholder="Opcional">
+          </div>
+        </div>
+      </div>
+
+      <div class="fila">
+        <div class="campo">
+          <label for="tipo_caso">Categoría<span class="req">*</span></label>
+          <select id="tipo_caso" name="tipo_caso_id" required>
+            <option value="" disabled selected>Selecciona una opción</option>
+            <option value="1" data-ayuda="Servicio, producto, logística">Queja o Reclamo</option>
+            <option value="2" data-ayuda="Procesos, atención, plataforma">Sugerencia de Mejora</option>
+            <option value="3" data-ayuda="Buenas prácticas, fraudes, faltas de cumplimiento">Reporte de Irregularidades</option>
+          </select>
+          <div class="ayuda" id="ayuda-tipo-caso"></div>
+          <div class="error">Selecciona una categoría.</div>
+        </div>
+        <div class="campo">
+          <label for="fecha_suceso">Fecha del suceso<span class="req">*</span></label>
+          <input type="date" id="fecha_suceso" name="fecha_suceso" required>
+          <div class="error">Indica la fecha en que ocurrió.</div>
+        </div>
+      </div>
+
+      <div class="fila uno">
+        <div class="campo">
+          <label for="descripcion">Detalle / Descripción del caso<span class="req">*</span></label>
+          <textarea id="descripcion" name="descripcion" placeholder="Cuéntanos con el mayor detalle posible qué ocurrió" required maxlength="2500"></textarea>
+          <div class="contador" id="contador-descripcion">0 / 2500</div>
+          <div class="error">Cuéntanos qué pasó (obligatorio).</div>
+        </div>
+      </div>
+
+      <div class="fila uno">
+        <div class="campo">
+          <label for="adjuntos">Adjuntos</label>
+          <div class="campo-archivo">
+            <input type="file" id="adjuntos" name="adjuntos[]" multiple accept=".pdf,.png,.jpg,.jpeg" class="input-archivo-oculto">
+            <label for="adjuntos" class="boton-archivo">Elegir archivos</label>
+            <span class="texto-archivos" id="lista-archivos">Ningún archivo seleccionado</span>
+          </div>
+          <div class="ayuda">Opcional. PDF, PNG o JPG — hasta 10 archivos y 10&nbsp;MB en total. Puedes enviarlo de forma anónima.</div>
+        </div>
+      </div>
+
+      <button type="submit">Enviar</button>
+      <div id="mensaje"></div>
+    </form>
+  </div>
+
+</div>
+</div>
+
+<script>
+
+(function(){
+  const frases = document.querySelectorAll('.frase');
+  let idx = 0;
+  setInterval(function(){
+    frases[idx].classList.remove('activa');
+    idx = (idx + 1) % frases.length;
+    frases[idx].classList.add('activa');
+  }, 4000);
+
+  const fecha = document.getElementById('fecha_suceso');
+  fecha.max = new Date().toISOString().split('T')[0];
+
+  const tipoCaso = document.getElementById('tipo_caso');
+  const ayudaTipo = document.getElementById('ayuda-tipo-caso');
+  tipoCaso.addEventListener('change', function(){
+    const opcion = tipoCaso.selectedOptions[0];
+    ayudaTipo.textContent = opcion ? (opcion.dataset.ayuda || '') : '';
+  });
+
+  const bloqueContacto = document.getElementById('bloque-contacto');
+  document.querySelectorAll('input[name="modo"]').forEach(function(radio){
+    radio.addEventListener('change', function(){
+      const esIdentificado = document.getElementById('modo-identificado').checked;
+      bloqueContacto.classList.toggle('oculto', !esIdentificado);
+      if (!esIdentificado) {
+        bloqueContacto.querySelectorAll('input').forEach(function(i){ i.value = ''; });
+      }
+    });
+  });
+
+  const adjuntos = document.getElementById('adjuntos');
+  const listaArchivos = document.getElementById('lista-archivos');
+  adjuntos.addEventListener('change', function(){
+    if (adjuntos.files.length === 0) {
+      listaArchivos.textContent = 'Ningún archivo seleccionado';
+    } else if (adjuntos.files.length === 1) {
+      listaArchivos.textContent = adjuntos.files[0].name;
+    } else {
+      listaArchivos.textContent = adjuntos.files.length + ' archivos seleccionados';
+    }
+  });
+
+  const descripcion = document.getElementById('descripcion');
+  const contador = document.getElementById('contador-descripcion');
+  descripcion.addEventListener('input', function(){
+    const len = descripcion.value.length;
+    contador.textContent = len + ' / 2500';
+    contador.classList.toggle('limite', len >= 2500);
+  });
+
+  const form = document.getElementById('form-caso');
+  const mensaje = document.getElementById('mensaje');
+  const MAX_TOTAL_BYTES = 10 * 1024 * 1024;
+  const MAX_ARCHIVOS = 10;
+
+  function marcarError(campo, mostrar){
+    campo.closest('.campo').classList.toggle('invalido', mostrar);
+  }
+
+  function validar(){
+    let ok = true;
+    form.querySelectorAll('[required]').forEach(function(campo){
+      const vacio = !campo.value;
+      marcarError(campo, vacio);
+      if (vacio) ok = false;
+    });
+
+    const emailCampo = document.getElementById('contacto_email');
+    if (emailCampo.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailCampo.value)) {
+      marcarError(emailCampo, true);
+      ok = false;
+    }
+
+    const adjuntos = document.getElementById('adjuntos');
+    let totalBytes = 0;
+    for (const f of adjuntos.files) totalBytes += f.size;
+    if (adjuntos.files.length > MAX_ARCHIVOS) {
+      mensaje.textContent = 'Máximo ' + MAX_ARCHIVOS + ' archivos por envío.';
+      mensaje.className = 'err';
+      ok = false;
+    } else if (totalBytes > MAX_TOTAL_BYTES) {
+      mensaje.textContent = 'Los adjuntos superan 10 MB en total. Quita alguno e inténtalo de nuevo.';
+      mensaje.className = 'err';
+      ok = false;
+    }
+    return ok;
+  }
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    mensaje.className = '';
+    mensaje.textContent = '';
+    if (!validar()) return;
+
+    const datos = new FormData(form);
+    const esAnonimo = document.getElementById('modo-anonimo').checked;
+    datos.set('es_anonimo', esAnonimo ? '1' : '0');
+
+    try {
+      // OJO: confirmar que esta ruta coincide con la carpeta real donde quedó
+      // publicado el proyecto (ver Paso 2 y 5 de la guía de despliegue).
+      const resp = await fetch('/canal-etico/public/guardar_caso.php', { method: 'POST', body: datos });
+      const resultado = await resp.json();
+      if (resp.ok && resultado.numero_referencia) {
+        mensaje.textContent = 'Reporte registrado. Tu número de ticket es ' + resultado.numero_referencia + '.';
+        mensaje.className = 'ok';
+        form.reset();
+        bloqueContacto.classList.add('oculto');
+        contador.textContent = '0 / 2500';
+      } else {
+        mensaje.textContent = resultado.error || 'No pudimos registrar el reporte. Intenta de nuevo.';
+        mensaje.className = 'err';
+      }
+    } catch (err) {
+      mensaje.textContent = 'Aún no está conectado el servidor que procesa el formulario (eso es la Fase 4).';
+      mensaje.className = 'err';
+    }
+  });
+})();
+
+</script>

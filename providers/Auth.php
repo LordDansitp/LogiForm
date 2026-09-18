@@ -43,7 +43,7 @@ class Auth
         self::iniciarSesion();
 
         foreach (self::cargarAdministradores() as $admin) {
-            if (hash_equals($admin['nombre'], $usuario) && hash_equals($admin['password'], $password)) {
+            if (hash_equals($admin['nombre'], $usuario) && password_verify($password, $admin['password'])) {
                 $_SESSION['admin_autenticado'] = true;
                 $_SESSION['admin_nombre'] = $admin['nombre'];
                 session_regenerate_id(true);

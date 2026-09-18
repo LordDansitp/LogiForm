@@ -49,6 +49,20 @@ $casos = $stmt->fetchAll();
 
 $tipos = $pdo->query('SELECT id, nombre FROM tipos_caso ORDER BY id')->fetchAll();
 $estadosPosibles = ['recibido', 'en revisión', 'en investigación', 'resuelto', 'cerrado'];
+
+// --- Adjuntos de los casos listados (una sola consulta para todos) ---
+$adjuntosPorCaso = [];
+if (!empty($casos)) {
+    $ids = array_column($casos, 'id');
+    $marcadores = implode(',', array_fill(0, count($ids), '?'));
+    $stmtAdj = $pdo->prepare(
+        "SELECT id, caso_id, nombre_original FROM casos_adjuntos WHERE caso_id IN ({$marcadores}) ORDER BY id"
+    );
+    $stmtAdj->execute($ids);
+    foreach ($stmtAdj->fetchAll() as $a) {
+        $adjuntosPorCaso[$a['caso_id']][] = $a;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -136,6 +150,8 @@ $estadosPosibles = ['recibido', 'en revisión', 'en investigación', 'resuelto',
   .detalle dt{color:var(--texto-muted); font-weight:500;}
   .detalle dd{margin:0;}
   .vacio{padding:40px; text-align:center; color:var(--texto-muted);}
+  .enlace-adjunto{color:var(--azul); font-size:13px; text-decoration:none;}
+  .enlace-adjunto:hover{text-decoration:underline;}
 </style>
 </head>
 <body>
@@ -247,7 +263,17 @@ $estadosPosibles = ['recibido', 'en revisión', 'en investigación', 'resuelto',
               <?php endif; ?>
 
               <dt>Adjuntos</dt>
-              <dd><?= (int) $c['num_adjuntos'] ?></dd>
+              <dd>
+                <?php if (empty($adjuntosPorCaso[$c['id']])): ?>
+                  0
+                <?php else: ?>
+                  <?php foreach ($adjuntosPorCaso[$c['id']] as $a): ?>
+                    <a class="enlace-adjunto" href="ver_adjunto.php?id=<?= $a['id'] ?>" target="_blank" rel="noopener">
+                      <?= htmlspecialchars($a['nombre_original']) ?>
+                    </a><br>
+                  <?php endforeach; ?>
+                <?php endif; ?>
+              </dd>
               <dt>Recibido</dt>
               <dd><?= htmlspecialchars($c['creado_en']) ?></dd>
             </dl>

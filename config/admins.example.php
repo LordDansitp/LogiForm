@@ -1,13 +1,16 @@
 <?php
 
-// Para agregar o modificar un administrador, solo edita este arreglo:
-// cambia el 'nombre' y la 'password' de cada persona.
-// por ejemplo. yo tengo en admins.php ['nombre' => 'daniel', 'password' => 'logiadmin'], así tienen que ponerlo
+// Para agregar o modificar un administrador, edita este arreglo.
+// La contraseña NO va en texto plano: hay que generar su hash primero.
+//
+// En terminal (donde tengas PHP), por cada persona:
+//   php -r "echo password_hash('la_contraseña_elegida', PASSWORD_DEFAULT), PHP_EOL;"
+// Copia el resultado completo (empieza con $2y$ o $2b$) como 'password'.
 
 return [
-    ['nombre' => 'Persona 1', 'password' => 'cambia-esta-contraseña-1'],
-    ['nombre' => 'Persona 2', 'password' => 'cambia-esta-contraseña-2'],
-    ['nombre' => 'Persona 3', 'password' => 'cambia-esta-contraseña-3'],
-    ['nombre' => 'Persona 4', 'password' => 'cambia-esta-contraseña-4'],
-    ['nombre' => 'Persona 5', 'password' => 'cambia-esta-contraseña-5'],
+    ['nombre' => 'Persona 1', 'password' => '$2y$10$pegaAquiElHashGenerado'],
+    ['nombre' => 'Persona 2', 'password' => '$2y$10$pegaAquiElHashGenerado'],
+    ['nombre' => 'Persona 3', 'password' => '$2y$10$pegaAquiElHashGenerado'],
+    ['nombre' => 'Persona 4', 'password' => '$2y$10$pegaAquiElHashGenerado'],
+    ['nombre' => 'Persona 5', 'password' => '$2y$10$pegaAquiElHashGenerado'],
 ];

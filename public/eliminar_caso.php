@@ -15,8 +15,20 @@ if ($casoId) {
     $caso = $stmt->fetch();
 
     if ($caso) {
-        // ON DELETE CASCADE en casos_adjuntos se encarga de esos registros.
+        // Guardamos los nombres de archivo ANTES de borrar, porque el
+        // ON DELETE CASCADE en casos_adjuntos se lleva esos registros.
+        $stmtAdj = $pdo->prepare('SELECT nombre_guardado FROM casos_adjuntos WHERE caso_id = :id');
+        $stmtAdj->execute(['id' => $casoId]);
+        $nombresGuardados = $stmtAdj->fetchAll(PDO::FETCH_COLUMN);
+
         $pdo->prepare('DELETE FROM casos WHERE id = :id')->execute(['id' => $casoId]);
+
+        foreach ($nombresGuardados as $nombreGuardado) {
+            $ruta = __DIR__ . '/../storage/adjuntos/' . basename($nombreGuardado);
+            if (is_file($ruta)) {
+                @unlink($ruta);
+            }
+        }
 
         Auth::registrarBitacora(
             Auth::nombreActual() ?? 'desconocido',

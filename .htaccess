@@ -1,0 +1,13 @@
+# Evita listar archivos si falta un index en alguna carpeta
+Options -Indexes
+
+# Bloquea el acceso directo a .env, .env.example y cualquier .sql suelto en esta carpeta
+<FilesMatch "(\.env(\.example)?|\.sql)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
