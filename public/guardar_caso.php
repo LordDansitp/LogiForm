@@ -41,7 +41,6 @@ function responder(int $codigo, array $datos): void
     exit;
 }
 
-// --- 1. Leer y validar los campos del formulario (nunca confiar solo en el JS) ---
 $tipoCasoId = filter_input(INPUT_POST, 'tipo_caso_id', FILTER_VALIDATE_INT);
 $fechaSuceso = $_POST['fecha_suceso'] ?? '';
 $descripcion = trim($_POST['descripcion'] ?? '');
@@ -112,7 +111,6 @@ if (!empty($_FILES['adjuntos']['name'][0])) {
     }
 }
 
-// --- 3. Guardar el caso en Supabase ---
 $pdo = null;
 try {
     $pdo = Database::conectar();
@@ -130,7 +128,6 @@ try {
          RETURNING id'
     );
 
-    // Referencia temporal única mientras conseguimos el id real (se reemplaza abajo)
     $stmt->execute([
         'numero_referencia' => uniqid('tmp_'),
         'tipo_caso_id' => $tipoCasoId,
@@ -151,7 +148,6 @@ try {
     $pdo->prepare('UPDATE casos SET numero_referencia = :ref WHERE id = :id')
         ->execute(['ref' => $numeroReferencia, 'id' => $casoId]);
 
-    // --- 4. Mover los adjuntos a disco (fuera de public/) y registrarlos ---
     if (!is_dir(CARPETA_ADJUNTOS)) {
         mkdir(CARPETA_ADJUNTOS, 0755, true);
     }

@@ -2,11 +2,6 @@
 
 class EmailService
 {
-    /**
-     * OJO, Envía únicamente una alerta genérica — nada de descripción, nombre, empresa,
-     * correo ni teléfono del reportante. El contenido real del caso se
-     * consulta únicamente desde el panel administrativo (con sesión).
-     */
     public static function notificarNuevoCaso(string $numeroReferencia, string $nombreCategoria): bool
     {
         $apiKey = $_ENV['RESEND_API_KEY'] ?? null;

@@ -7,7 +7,6 @@ Auth::requerirAutenticacion();
 
 $pdo = Database::conectar();
 
-// --- Conteos por categoría (para las donas) ---
 $conteos = $pdo->query(
     'SELECT t.id, t.nombre, COUNT(c.id) AS total
      FROM tipos_caso t
@@ -20,7 +19,6 @@ $totalCasos = array_sum(array_column($conteos, 'total'));
 $coloresDona = ['#165DA9', '#3688C9', '#0F4A87'];
 $circunferencia = 2 * M_PI * 52;
 
-// --- Lista de casos (con filtros) ---
 $estado = $_GET['estado'] ?? '';
 $categoria = $_GET['categoria'] ?? '';
 
@@ -50,7 +48,6 @@ $casos = $stmt->fetchAll();
 $tipos = $pdo->query('SELECT id, nombre FROM tipos_caso ORDER BY id')->fetchAll();
 $estadosPosibles = ['recibido', 'en revisión', 'en investigación', 'resuelto', 'cerrado'];
 
-// --- Adjuntos de los casos listados (una sola consulta para todos) ---
 $adjuntosPorCaso = [];
 if (!empty($casos)) {
     $ids = array_column($casos, 'id');
